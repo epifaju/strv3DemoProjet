@@ -183,7 +183,7 @@ Variables
     height: 65%;
     top: 0;
     left: 0;
-    /*background: url(./components/images/hero.svg);*/
+    background: url(./images/hero.svg);
     background-size: cover;
     background-repeat: no-repeat;
     z-index: -1;
@@ -238,6 +238,7 @@ Variables
       height: 100%;
       display: grid;
       align-items: center;
+      display: flex;
     }
     .nav-links li {
       height: 100%;
@@ -247,7 +248,7 @@ Variables
       background: transparent;
       border-color: transparent;
       font-size: 1.1rem;
-      color: white;
+      color: blue;
       text-transform: capitalize;
       letter-spacing: 1px;
       width: 10rem;

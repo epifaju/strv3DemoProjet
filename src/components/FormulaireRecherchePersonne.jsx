@@ -9,34 +9,18 @@ import { useParams } from "react-router";
 import SelectPays from './SelectPays.jsx';
 import SelectVille from './SelectVille.jsx';
 import SelectTypePersonne from "./SelectTypePersonne.jsx";
+import { faAddressCard, faTrashAlt, faEye} from "@fortawesome/free-regular-svg-icons";
+import Icon from './Icon.jsx';
 
-const statuts = {
-  NEW: 1,
-  VALIDE: 2,
-  ENVOI: 3,
-  OK: 4,
-  KO: 5,
-  EDIT: 6,
-  RECUP: 7,
-};
+export default function FormulaireRecherchePersonne(rechParams) {
 
-export default function FormulairePersonne({id}) {
-  //const { id } = useParams();
-  console.log(id!==null ? id:"");
   const dispatch = useDispatch();
   const [user, setUser] = useState({ prenom: "", nom: "", age: "" , type:""});
   const [errors, setErrors] = useState([]);
-  // Récupération des statuts dans l'état du composant
-  const [statut, setStatut] = useState(id === '0' ? statuts.NEW : statuts.EDIT);
-  const [list, setList] = useState(getLocalStorage());
-  /*if(list.length==0){
-    setList(user);
-  }*/
-  //Récupération des pays dans l'état global --> useSelector
-  //const pays = useSelector((state) => state.referentiel.pays);
-  //if (!pays) {
-  //  dispatch(getPays());
-  //}
+  const [isRecherche, setIsRecherche] = useState(false);
+  const [listRecherchePersonnes, setListRecherchePersonnes] = useState([]);
+  const paysList = useSelector(state => state.referentiel.pays);
+  const typePersList = useSelector(state => state.referentielTypePersonne.typePersonne);
 
   useEffect(() => {
     const e = setTimeout(() => setErrors([]), 4000);
@@ -47,11 +31,13 @@ export default function FormulairePersonne({id}) {
 
   useEffect(
     async function () {
-      console.log("useEffect " + statut);
-      if (statut === statuts.VALIDE) {
-        console.log('Statut : '+statut);
-        setStatut(statuts.ENVOI);
-        console.log("setStatut : ENVOI");
+      console.log("useEffect getRecherche Personne");
+      console.log(user);
+      console.log('isRecherche : '+isRecherche);
+      console.log('listRecherchePersonnes');
+      console.log(listRecherchePersonnes);
+     
+       /*
         try {
           if (user && user.id) {
             await personne.updatePersonne(user);
@@ -68,54 +54,35 @@ export default function FormulairePersonne({id}) {
             setUser({ id: persId, ...user });
             setList([...list, user]);
           }
-          // await updateUser(user);
-          setStatut(statuts.OK);
-          console.log('setStatut : OK');
-          //onChangeUser();
-          console.log('Redirect to list person');
-          dispatch(push('/personnes'));
+          //dispatch(push('/personnes'));
         } catch (error) {
-          console.log('setStatut : KO');
-          setStatut(statuts.KO);
+          console.log(error);
 
-        }
-      }
-      if (statut === statuts.EDIT) {
-        console.log('Statut : '+statut);
-        setStatut(statuts.RECUP);
-        console.log('setStatut : RECUP');
+        }*/
+    
+
         try {
             //TODO : vérification si user n'est pas null
-            let userEdit = await personne.fetchPersonne(id);
-          setUser(userEdit);
-          console.log('setStatut : NEW');
-          setStatut(statuts.NEW);
+            if(isRecherche===true) {
+              let rechParams ={nom:user.nom, prenom:user.prenom};
+              console.log('rechParams');
+              console.log(rechParams);
+              let listRecherchePersonnes = await personne.fetchListPersonnes(rechParams);
+              console.log('listPersonnes returned by fetchListPersonnes function');
+              console.log(listRecherchePersonnes);
+              setListRecherchePersonnes(listRecherchePersonnes);
+              setIsRecherche(false);
+            }
         } catch (error) {
           console.warn(error);
         }
-      }
-      if (statut === statuts.OK || statut === statuts.KO) {
-        console.log('Statut : '+statut);
-        const e = setTimeout(() => setStatut(statuts.NEW), 4000);
-        return () => {
-          clearTimeout(e);
-        };
-      }
-    },
-    [statut]
+    },[isRecherche]
   );
 
-  useEffect(
-    ()=>setStatut(statuts.EDIT), 
-    [id]
-    );
 
-  function onSubmitUser() {
-    console.log('onSubmitUser');
-    if (statut !== statuts.NEW) {
-      console.log('Statut : '+statut);
-      return;
-    }
+  function onSubmitRecherchePersonne() {
+    console.log('onSubmitRecherchePersonne');
+    console.log(user);
     const anos = [];
     if(user) {
 
@@ -136,18 +103,17 @@ export default function FormulairePersonne({id}) {
           anos.push("age");
         }
       }
+      if(anos.length===0){
+        setIsRecherche(true);
+      }
     }else {
       anos.push("prenom");
       anos.push("nom");
       anos.push("age");
       anos.push("type");
     }
-
+    
     setErrors(anos);
-    if (!anos.length) {
-      console.log('Statut : VALIDE');
-      setStatut(statuts.VALIDE);
-    }
   }
 
   return (
@@ -204,13 +170,48 @@ export default function FormulairePersonne({id}) {
           }} paysSelected={user && user.pays}
           value={user && user.ville} />
       </div>
+      
       <button className="btn" onClick={()=> dispatch(push('/personnes'))}>Retour</button>
-      <button className="btn" onClick={onSubmitUser}>Valider</button>
-      {statut === statuts.OK && (
-        <div style={{ color: "green" }}>User Enregistré</div>
-      )}
-      {statut === statuts.KO && <div style={{ color: "red" }}>Erreur</div>}
+      <button className="btn" onClick={onSubmitRecherchePersonne}>Rechercher</button>
+
       {errors.length!==0 && <div style={{ color: "red" }}>Erreur : renseignez les champs obligatoires</div>}
+
+      {listRecherchePersonnes.length > 0 && 
+      <>
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Age</th>
+            <th>Type</th>
+            <th>Nationalité</th>
+            <th>Ville</th>
+            <th>Modifier</th>
+            <th>Supprimer</th>
+            <th>Editer en live</th>
+          </tr>
+        </thead>
+        <tbody>
+          { listRecherchePersonnes.map((p, i)=>
+          <tr key={i} align="center">
+            <td>{p.nom}</td>
+            <td>{p.prenom}</td>
+            <td>{p.age}</td>
+            <td>{typePersList?.find(typePers => typePers.type===p.type).libelle}</td>
+            <td>{paysList?.find(pay => pay.code===p.pays).titre}</td>
+            <td>{p.ville}</td>
+            <td style={{verticalAlign:'middle'}}><Icon style={{cursor:'pointer'}} fa={faAddressCard} onClick={()=>dispatch(push(`/personnes/${p.id}`)) }/></td>
+            <td style={{verticalAlign:'middle'}}><Icon style={{cursor:'pointer'}} fa={faTrashAlt} onClick={async function(){await personne.deletePerson(p.id); setStatut(1)} }/></td>
+            <td style={{verticalAlign:'middle'}}><Icon style={{cursor:'pointer'}} fa={faEye} onClick={async function(){setSelectedUser(p.id)} }/></td>
+          </tr>
+          )}
+        </tbody>
+      </table>
+      <button className="btn" onClick={()=>dispatch(push('/personnes/0')) }>Ajouter personne</button>
+      </>
+      }
     </div>
+    
   );
 }

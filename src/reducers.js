@@ -46,12 +46,6 @@ function reduceReferentiel(state = {}, action) {
 }
 
 
-function reduceReferentielTypePersonne(state = {}, action) {
-    return {
-      typePersonne: reduceTypePersonne(state.typePersonne, action),
-    };
-}
-
 function reducePays(state = null, action) {
   switch (action.type) {
     case 'SET_PAYS':
@@ -61,6 +55,13 @@ function reducePays(state = null, action) {
   }
   return state;
 }
+
+function reduceReferentielTypePersonne(state = {}, action) {
+  return {
+    typePersonne: reduceTypePersonne(state.typePersonne, action),
+  };
+}
+
 
 function reduceTypePersonne(state = null, action) {
   switch (action.type) {

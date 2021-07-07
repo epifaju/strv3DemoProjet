@@ -9,6 +9,7 @@ import { init as initService } from './service.js';
 import {connectRouter, routerMiddleware, ConnectedRouter} from 'connected-react-router';
 import {createBrowserHistory} from 'history';
 import {combineReducers} from 'redux';
+import { AppProvider } from './context';
 
 import './index.css';
 
@@ -30,6 +31,8 @@ initService(store);
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <Content />
+      <AppProvider>
+        <Content />
+      </AppProvider>
     </ConnectedRouter>
   </Provider>, document.getElementById('root'));

@@ -6,8 +6,13 @@ import Info from './Info.jsx';
 import Page404 from './Page404.jsx';
 import Bandeau from './Bandeau.jsx'
 import Menu from './Menu.jsx';
+import Navbar from './Navbar.js';
+import Sidebar from './Sidebar.js';
+import Hero from './Hero.js';
+import Submenu from './Submenu.js';
 import ListePersonne from './ListePersonne.jsx';
 import FormulairePersonnePage from './FormulairePersonnePage.jsx';
+import FormulaireRecherchePersonne from './FormulaireRecherchePersonne.jsx';
 import {Switch, Route} from 'react-router';
 
 
@@ -22,14 +27,29 @@ function Content() {
   
   //   }
   //}
-  return <> 
-            <Bandeau/>
-            <Menu/>
+  return <> <Navbar />
+            <Sidebar />
+        {/*<Hero />
+          <Bandeau/>
+          <Menu/>
+          */}
+            <Submenu />
           <Switch>
+            {
+              /* 
+              <Route exact path='/' render={()=><Home/>}/>
+              <Route exact path='/informations' render={()=><Info/>}/>
+              <Route exact path='/personnes' render={()=><ListePersonne/>}/>
+              <Route path='/personnes/:id' render={()=><FormulairePersonnePage/>}/>
+              <Route path='/formulaireRecherchePersonne' render={()=><FormulaireRecherchePersonne/>}/>
+              <Route render={()=><Page404/>}/>
+              **/
+           }
             <Route exact path='/' render={()=><Home/>}/>
             <Route exact path='/informations' render={()=><Info/>}/>
             <Route exact path='/personnes' render={()=><ListePersonne/>}/>
             <Route path='/personnes/:id' render={()=><FormulairePersonnePage/>}/>
+            <Route path='/formulaireRecherchePersonne' render={()=><FormulaireRecherchePersonne/>}/>
             <Route render={()=><Page404/>}/>
           </Switch>
   

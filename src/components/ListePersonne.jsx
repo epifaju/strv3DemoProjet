@@ -70,6 +70,7 @@ export default function ListePersonne() {
         </tbody>
       </table>
       <button className="btn" onClick={()=>dispatch(push('/personnes/0')) }>Ajouter personne</button>
+      <button className="btn" onClick={()=>dispatch(push('/formulaireRecherchePersonne')) }>Rechercher personne</button>
       </>
       }
       {!list && 'Chargement en cours'}
